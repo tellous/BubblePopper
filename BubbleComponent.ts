@@ -117,7 +117,7 @@ class BubbleComponent extends hz.Component<typeof BubbleComponent> {
         }
 
         // Apply stun effect (negative score)
-        this.sendLocalBroadcastEvent(ScoreEvent, { 
+        this.sendNetworkBroadcastEvent(ScoreEvent, { 
             player: player, 
             score: this.score, // Use the assigned score (should be -1)
             entity: this.entity 
@@ -142,7 +142,7 @@ class BubbleComponent extends hz.Component<typeof BubbleComponent> {
         }
 
         // Award points
-        this.sendLocalBroadcastEvent(ScoreEvent, { 
+        this.sendNetworkBroadcastEvent(ScoreEvent, { 
             player: player, 
             score: finalScore, 
             entity: this.entity 

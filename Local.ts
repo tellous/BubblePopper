@@ -1,10 +1,11 @@
 import * as hz from 'horizon/core';
 import LocalCamera from 'horizon/camera';
 import * as hzui from 'horizon/ui';
-import { BubbleTappedEvent, ForceGameOverEvent, GameOverResetCameraEvent, PlayerColorAssignEvent, RequestPlayerColorEvent } from './Events';
+import { BubbleTappedEvent, ForceGameOverEvent, GameOverResetCameraEvent, PlayerColorAssignEvent, RequestPlayerColorEvent, ScoreEvent } from './Events';
 
 const playerData = {
   colorNameBinding: new hzui.Binding('red'),
+  scoreBinding: new hzui.Binding(0),
 }
 
 class Local extends hz.Component<typeof Local> {
@@ -69,6 +70,12 @@ class Local extends hz.Component<typeof Local> {
     this.connectNetworkBroadcastEvent(
       PlayerColorAssignEvent,
       this.onColorAssign.bind(this)
+    );
+
+    // Listen for score updates
+    this.connectNetworkBroadcastEvent(
+      ScoreEvent,
+      this.onScoreUpdate.bind(this)
     );
 
     this.connectCodeBlockEvent(
@@ -156,6 +163,13 @@ class Local extends hz.Component<typeof Local> {
       });
     }
   }
+
+  private onScoreUpdate(data: { player: hz.Player; score: number, entity: hz.Entity }) {
+    // Only update score for the local player
+    if (data.player === this.localPlayer) {
+      playerData.scoreBinding.set(data.score);
+    }
+  }
 }
 hz.Component.register(Local);
 
@@ -175,17 +189,34 @@ class PlayerUI extends hzui.UIComponent<typeof PlayerUI> {
             hzui.Text({
               text: playerData.colorNameBinding.derive((colorName) => { return `Pop the ${colorName} bubbles` }),
               style: {
-                fontSize: 40,
+                fontSize: 24,
                 fontWeight: 'bold',
               }
             }),
             hzui.View({
               style: {
-                width: 100,
-                height: 100,
+                width: 30,
+                height: 30,
                 marginTop: 20,
                 borderRadius: 50,
                 backgroundColor: playerData.colorNameBinding
+              }
+            }),
+            hzui.Text({
+              text: playerData.scoreBinding.derive((score) => { return `Bubbles Popped: ${score}` }),
+              style: {
+                fontSize: 24,
+                fontWeight: 'bold',
+                marginTop: 20,
+              }
+            }),
+            hzui.Text({
+              text: "Yellow bubbles count as x2!",
+              style: {
+                fontSize: 24,
+                color: '#FFD700',
+                marginTop: 10,
+                fontWeight: 'bold'
               }
             })
           ],
@@ -196,6 +227,8 @@ class PlayerUI extends hzui.UIComponent<typeof PlayerUI> {
       ],
       style: {
         flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderRadius: 20,
         justifyContent: 'flex-end',
         alignItems: 'center',
         marginBottom: 50,

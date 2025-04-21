@@ -58,7 +58,7 @@ class Game extends hz.Component<typeof Game> {
     );
 
     // Handle scoring
-    this.connectLocalBroadcastEvent(
+    this.connectNetworkBroadcastEvent(
       ScoreEvent,
       this.registerScore.bind(this)
     );

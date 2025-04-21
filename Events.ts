@@ -4,7 +4,7 @@ export const BubbleTappedEvent = new hz.LocalEvent<{ player: hz.Player }>();
 
 export const AssignDataEvent = new hz.LocalEvent<{ player?: hz.Player; color: string, score: number }>();
 
-export const ScoreEvent = new hz.LocalEvent<{ player: hz.Player; score: number, entity: hz.Entity }>();
+export const ScoreEvent = new hz.NetworkEvent<{ player: hz.Player; score: number, entity: hz.Entity }>('Score');
 
 export const GameOverResetCameraEvent = new hz.LocalEvent();
 
