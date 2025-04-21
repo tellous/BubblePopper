@@ -236,7 +236,7 @@ class Game extends hz.Component<typeof Game> {
 
   private timesUp() {
     // Broadcast event to reset camera to first person view
-    this.sendLocalBroadcastEvent(GameOverResetCameraEvent, {});
+    this.sendNetworkBroadcastEvent(GameOverResetCameraEvent, {});
 
     this.endGame();
   }

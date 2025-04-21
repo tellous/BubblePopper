@@ -60,7 +60,7 @@ class Local extends hz.Component<typeof Local> {
     );
 
     // Listen for game over event to reset camera to first person
-    this.connectLocalBroadcastEvent(
+    this.connectNetworkBroadcastEvent(
       GameOverResetCameraEvent,
       this.resetCamera.bind(this)
     );
@@ -106,6 +106,11 @@ class Local extends hz.Component<typeof Local> {
   private resetCamera() {
     LocalCamera.setCameraModeThirdPerson();
     LocalCamera.resetCameraFOV();
+    
+    // Exit focused interaction mode when the game ends
+    if (this.localPlayer) {
+      this.localPlayer.exitFocusedInteractionMode();
+    }
   }
 
   private exit() {
